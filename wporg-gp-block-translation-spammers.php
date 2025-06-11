@@ -16,9 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WPORG_GP_BLOCK_PLUGIN_VERSION', '1.0.0' );
-define( 'WPORG_GP_BLOCK_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
-define( 'WPORG_GP_BLOCK_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'WPORG_GP_BLOCK_TRANSLATION_SPAMMERS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 /**
  * Main plugin class
@@ -26,33 +24,33 @@ define( 'WPORG_GP_BLOCK_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 class WPORG_GP_Block_Translation_Spammers {
 	
 	/**
-	 * Array of blocked usernames.
-     * 
-	 * Add usernames to this array to block them from translate.wordpress.org.
-     * This is uppercase sensitive, so ensure usernames are added exactly as they appear.
+	 * Array of blocked usernames and the reason URL to ban them.
+	 *
+	 * Add usernames and the reason URL to this array to block them from translate.wordpress.org.
+	 * This is uppercase sensitive, so ensure usernames are added exactly as they appear.
 	 *
 	 * @var array
 	 */
 	private const BLOCKED_USERS = array(
-		array ( 'jesusamieiro', 'https://make.wordpress.org/polyglots/2025/04/30/can-users-be-blocked-by-someone/' ),
+		'jesusamieiro' => 'https://make.wordpress.org/polyglots/2025/04/30/can-users-be-blocked-by-someone/',
 	);
 	
 	/**
-	 * Target domain to block access to
+	 * Target domain to block access to.
 	 *
 	 * @var string
 	 */
 	private const TARGET_DOMAIN = 'translate.wordpress.org';
 	
 	/**
-	 * Instance of this class
+	 * Instance of this class.
 	 *
 	 * @var WPORG_GP_Block_Translation_Spammers|null
 	 */
 	private static $instance = null;
 	
 	/**
-	 * Get singleton instance
+	 * Get singleton instance.
 	 *
 	 * @return WPORG_GP_Block_Translation_Spammers Instance of this class.
 	 */
@@ -64,14 +62,14 @@ class WPORG_GP_Block_Translation_Spammers {
 	}
 	
 	/**
-	 * Constructor
+	 * Constructor.
 	 */
 	private function __construct() {
 		$this->check_and_block_user();
 	}
 	
 	/**
-	 * Check if current user should be blocked and block if necessary
+	 * Check if current user should be blocked and block if necessary.
 	 */
 	public function check_and_block_user() {
 		if ( ! $this->is_target_domain() ) {
@@ -91,7 +89,7 @@ class WPORG_GP_Block_Translation_Spammers {
 	}
 	
 	/**
-	 * Check if we're on the target domain
+	 * Check if we're on the target domain.
 	 *
 	 * @return bool True if on target domain, false otherwise.
 	 */
@@ -101,18 +99,13 @@ class WPORG_GP_Block_Translation_Spammers {
 	}
 	
 	/**
-	 * Check if username is in blocked list
+	 * Check if username is in blocked list.
 	 *
 	 * @param string $username The username to check.
 	 * @return bool True if user is blocked, false otherwise.
 	 */
 	private function is_user_blocked( $username ) {
-		foreach ( self::BLOCKED_USERS as $blocked_user ) {
-			if ( $username === $blocked_user[0] ) {
-				return true;
-			}
-		}
-		return false;
+		return array_key_exists( $username, self::BLOCKED_USERS );
 	}
 	
 	/**
@@ -129,16 +122,16 @@ class WPORG_GP_Block_Translation_Spammers {
     
     /**
      * Get the translatable ban message
+	 * 
+	 * @return string The ban message with placeholders replaced.
      */
     private function get_ban_message() {
 		$current_user = wp_get_current_user();
+		$username = $current_user->user_login;
 		$reason_url = 'https://make.wordpress.org/polyglots/';
 		
-		foreach ( self::BLOCKED_USERS as $blocked_user ) {
-			if ( $current_user->user_login === $blocked_user[0] ) {
-				$reason_url = isset( $blocked_user[1] ) ? $blocked_user[1] : $reason_url;
-				break;
-			}
+		if ( isset( self::BLOCKED_USERS[$username] ) ) {
+			$reason_url = self::BLOCKED_USERS[$username];
 		}
 		 
         return __(
@@ -158,11 +151,13 @@ class WPORG_GP_Block_Translation_Spammers {
      * Render the complete block page
      *
      * @param string $message The ban message to display.
+	 * 
+	 * @return void
      */
     private function render_block_page( $message ) {
         $title = esc_html__( 'Access Blocked', 'wporg-gp-block-translation-spammers' );
         $site_name = get_bloginfo( 'name' );
-        $css_url = WPORG_GP_BLOCK_PLUGIN_URL . 'assets/css/style.css';
+        $css_url = WPORG_GP_BLOCK_TRANSLATION_SPAMMERS_PLUGIN_URL . 'assets/css/style.css';
         
         ?>
         <!DOCTYPE html>
