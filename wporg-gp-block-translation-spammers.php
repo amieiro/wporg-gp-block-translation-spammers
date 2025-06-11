@@ -81,7 +81,7 @@ class WPORG_GP_Block_Translation_Spammers {
 		}
 		
 		$current_user = wp_get_current_user();
-		if ( ! $this->is_user_blocked( $current_user->user_login ) ) {
+		if ( ! $current_user || ! $current_user->exists() || ! $this->is_user_blocked( $current_user->user_login ) ) {
 			return;
 		}
 		
@@ -94,7 +94,7 @@ class WPORG_GP_Block_Translation_Spammers {
 	 * @return bool True if on target domain, false otherwise.
 	 */
 	private function is_target_domain() {
-		$current_host = isset( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : '';
+		$current_host = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( $_SERVER['HTTP_HOST'] ) : '';
 		return $current_host === self::TARGET_DOMAIN;
 	}
 	
@@ -105,13 +105,14 @@ class WPORG_GP_Block_Translation_Spammers {
 	 * @return bool True if user is blocked, false otherwise.
 	 */
 	private function is_user_blocked( $username ) {
-		return array_key_exists( $username, self::BLOCKED_USERS );
+		$blocked_users = apply_filters( 'wporg_gp_block_translation_spammers_users', self::BLOCKED_USERS );
+		return array_key_exists( $username, $blocked_users );
 	}
 	
 	/**
 	 * Display the block message and exit
 	 */
-	public function display_block_message() {
+	private function display_block_message() {
 		status_header( 403 );
 		nocache_headers();
 
@@ -134,16 +135,17 @@ class WPORG_GP_Block_Translation_Spammers {
 			$reason_url = self::BLOCKED_USERS[$username];
 		}
 		 
-        return __(
-            sprintf(
-                /* translators: 1: Username, 2: Discussion to ban the user. 3: Slack channel URL, 4: Make WordPress.org URL */
-                'You (%1$s) have been banned from the translation system for repeatedly submitting incorrect or potentially AI-generated translations.<br> You can see the full discussion <a href="%2$s">here</a>.<br> If you believe this is a mistake, please request assistance in this <a href="%3$s">Slack channel</a> or submit an appeal at <a href="%4$s">Make WordPress.org</a>.',
-                $current_user->user_login,
-                $reason_url,
-                'https://wordpress.slack.com/archives/C02RP50LK',
-                'https://make.wordpress.org/polyglots/'
-            ),
-			'wporg-gp-block-translation-spammers'
+		$profile_url = sprintf( 'https://profiles.wordpress.org/%s/', rawurlencode( $username ) );
+		/* translators: 1: User profile URL, 2: Username, 3: Discussion URL, 4: Slack channel URL, 5: Make WordPress.org URL */
+		$message = __('You (<a href="%1$s" target="_blank">%2$s</a>) have been banned from the translation system for repeatedly submitting incorrect or potentially AI-generated translations.<br> You can see the full discussion <a href="%3$s" target="_blank">here</a>.<br> If you believe this is a mistake, please request assistance in this <a href="%4$s" target="_blank">Slack channel</a> or submit an appeal at <a href="%5$s" target="_blank">Make WordPress.org</a>.', 'wporg-gp-block-translation-spammers');
+		
+		return sprintf(
+			$message,
+			esc_url( $profile_url ),
+			esc_html( $username ),
+			esc_url( $reason_url ),
+			esc_url( 'https://wordpress.slack.com/archives/C02RP50LK' ),
+			esc_url( 'https://make.wordpress.org/polyglots/' )
 		);
     }
     
