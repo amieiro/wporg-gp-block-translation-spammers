@@ -1,4 +1,4 @@
-# WordPress.org GP Block Translation Spammers
+# WordPress.org GP Contributor Moderation
 
 This plugin prevents certain users from submitting new individual and/or bulk translations to the [translation system](https://translate.wordpress.org/) because they repeatedly submitted incorrect translations.
 This is the message displayed to the blocked user. The translation form is blocked and the submit button is disabled.
