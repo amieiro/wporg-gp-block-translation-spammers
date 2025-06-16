@@ -66,6 +66,7 @@ class WPORG_GP_Block_Translation_Spammers {
 	 */
 	private function __construct() {
 		add_action( 'gp_before_translation_table', array( $this, 'show_banned_message' ) );
+		add_filter( 'gp_pre_can_user', array( $this, 'block_translation_spammers' ), 10, 2 );
 	}
 	
 	/**
@@ -169,6 +170,39 @@ class WPORG_GP_Block_Translation_Spammers {
                 'br'   => array(),
             )
         );
+    }
+    
+    /**
+     * Block translation spammers from submitting translations.
+     *
+     * @param bool|null  $can    Whether the user can perform the action, or null if it hasn't been determined yet.
+     * @param array      $action An array with the action the user is trying to perform (edit, approve, etc.)
+     * @return bool|null Whether the user can perform the action.
+     */
+    public function block_translation_spammers( $can, $action ) {
+        if ( ! $this->is_target_domain() ) {
+            return $can;
+        }
+        
+        $blocked_actions = array( 'edit', 'write', 'approve', 'import-waiting' );
+        if ( ! in_array( $action['action'], $blocked_actions, true ) ) {
+            return $can;
+        }
+        
+        if ( ! is_user_logged_in() ) {
+            return $can;
+        }
+        
+        $current_user = wp_get_current_user();
+        if ( ! $current_user || ! $current_user->exists() ) {
+            return $can;
+        }
+        
+        if ( $this->is_user_blocked( $current_user->user_login ) ) {
+            return false;
+        }
+        
+        return $can;
     }
 }
 
