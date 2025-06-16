@@ -1,8 +1,10 @@
 # WordPress.org GP Block Translation Spammers
 
-This plugin blocks specific users from accessing the [translation system](https://translate.wordpress.org/) for submitting incorrect translations repeatedly.
+This plugin prevents certain users from submitting new individual and/or bulk translations to the [translation system](https://translate.wordpress.org/) because they repeatedly submitted incorrect translations.
+This is the message displayed to the blocked user. The translation form is blocked and the submit button is disabled.
 
-This is the message displayed to the blocked user.
+![image](https://github.com/user-attachments/assets/38510f1d-75f0-40fd-ba48-9e430af8c559)
 
-![image](https://github.com/user-attachments/assets/79e16c75-5afe-47a6-b0f3-6eefc12cdf94)
+When the user tryes to access to the URL to upload a translation file (e.g. [this URL](https://translate.wordpress.org/projects/wp-plugins/custom-registration-form-builder-with-submission-manager/stable/gl/default/import-translations/)), she gets this error:
 
+![image](https://github.com/user-attachments/assets/505ebf3a-5907-4fb0-8046-fcc7fa07142c)
