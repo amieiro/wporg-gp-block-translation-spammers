@@ -3,7 +3,7 @@
 This plugin prevents certain users from submitting new individual and/or bulk translations to the [translation system](https://translate.wordpress.org/) because they repeatedly submitted incorrect translations.
 This is the message displayed to the blocked user. The translation form is blocked and the submit button is disabled.
 
-![image](https://github.com/user-attachments/assets/38510f1d-75f0-40fd-ba48-9e430af8c559)
+![image](https://github.com/user-attachments/assets/e6667fd0-1bf2-4e4b-b8e4-2b8b389ca2a1)
 
 When the user tryes to access to the URL to upload a translation file (e.g. [this URL](https://translate.wordpress.org/projects/wp-plugins/custom-registration-form-builder-with-submission-manager/stable/gl/default/import-translations/)), she gets this error:
 
