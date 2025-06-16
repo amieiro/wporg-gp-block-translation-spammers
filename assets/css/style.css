@@ -1,4 +1,4 @@
-#show_banned_message {
+.show_banned_message {
 	width: 100%; 
 	border: 1px solid #dc3232; 
 	background: #dc3232; 
@@ -7,14 +7,14 @@
 	padding: 1rem;
 }
 
-#show_banned_message a {
+.show_banned_message a {
 	color: #fff;
 	text-decoration: underline;
 	font-weight: regular;
 }
 
-#show_banned_message a:hover,
-#show_banned_message a:focus {
+.show_banned_message a:hover,
+.show_banned_message a:focus {
 	color: #f0f0f0;
 	text-decoration: none;
 }
