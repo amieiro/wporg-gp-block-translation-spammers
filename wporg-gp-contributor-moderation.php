@@ -106,7 +106,7 @@ class WPORG_GP_Contributor_Moderation {
 		 
 		$profile_url = sprintf( 'https://profiles.wordpress.org/%s/', rawurlencode( $username ) );
 		/* translators: 1: User profile URL, 2: Username, 3: Discussion URL, 4: Slack channel URL, 5: Make WordPress.org URL */
-		$message = __('Because you (<a href="%1$s" target="_blank">%2$s</a>) have repeatedly submitted bad translations, currently you cannot submit new translations to <a href="https://translate.wordpress.org/" target="_blank">translate.wordpress.org</a>. You can see the full discussion <a href="%3$s" target="_blank">here</a>.<br> If you believe this is a mistake, please request assistance in this <a href="%4$s" target="_blank">Slack channel</a> or submit an appeal at <a href="%5$s" target="_blank">Make WordPress.org</a>.', 'wporg-gp-contributor-moderation');
+		$message = __('Because you (<a href="%1$s" target="_blank">%2$s</a>) have repeatedly submitted translations that <a href="https://make.wordpress.org/polyglots/handbook/translating/expectations/" target="_blank">violated the expectations</a>, currently you cannot submit new translations to <a href="https://translate.wordpress.org/" target="_blank">translate.wordpress.org</a>. You can see the full discussion <a href="%3$s" target="_blank">here</a>.<br> If you believe this is a mistake, please request assistance in this <a href="%4$s" target="_blank">Slack channel</a> or submit an appeal at <a href="%5$s" target="_blank">Make WordPress.org</a>.', 'wporg-gp-contributor-moderation');
 
 		return sprintf(
 			$message,
