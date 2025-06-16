@@ -65,27 +65,7 @@ class WPORG_GP_Block_Translation_Spammers {
 	 * Constructor.
 	 */
 	private function __construct() {
-		$this->check_and_block_user();
-	}
-	
-	/**
-	 * Check if current user should be blocked and block if necessary.
-	 */
-	public function check_and_block_user() {
-		if ( ! $this->is_target_domain() ) {
-			return;
-		}
-		
-		if ( ! is_user_logged_in() ) {
-			return;
-		}
-		
-		$current_user = wp_get_current_user();
-		if ( ! $current_user || ! $current_user->exists() || ! $this->is_user_blocked( $current_user->user_login ) ) {
-			return;
-		}
-		
-		$this->display_block_message();
+		add_action( 'gp_before_translation_table', array( $this, 'show_banned_message' ) );
 	}
 	
 	/**
@@ -108,21 +88,9 @@ class WPORG_GP_Block_Translation_Spammers {
 		$blocked_users = apply_filters( 'wporg_gp_block_translation_spammers_users', self::BLOCKED_USERS );
 		return array_key_exists( $username, $blocked_users );
 	}
-	
-	/**
-	 * Display the block message and exit
-	 */
-	private function display_block_message() {
-		status_header( 403 );
-		nocache_headers();
-
-		$message = $this->get_ban_message();
-		$this->render_block_page( $message );
-		exit;
-	}
     
     /**
-     * Get the translatable ban message
+     * Get the ban message.
 	 * 
 	 * @return string The ban message with placeholders replaced.
      */
@@ -137,8 +105,8 @@ class WPORG_GP_Block_Translation_Spammers {
 		 
 		$profile_url = sprintf( 'https://profiles.wordpress.org/%s/', rawurlencode( $username ) );
 		/* translators: 1: User profile URL, 2: Username, 3: Discussion URL, 4: Slack channel URL, 5: Make WordPress.org URL */
-		$message = __('You (<a href="%1$s" target="_blank">%2$s</a>) have been banned from the translation system for repeatedly submitting incorrect or potentially AI-generated translations.<br> You can see the full discussion <a href="%3$s" target="_blank">here</a>.<br> If you believe this is a mistake, please request assistance in this <a href="%4$s" target="_blank">Slack channel</a> or submit an appeal at <a href="%5$s" target="_blank">Make WordPress.org</a>.', 'wporg-gp-block-translation-spammers');
-		
+		$message = __('Because you (<a href="%1$s" target="_blank">%2$s</a>) have repeatedly submitted bad translations, currently you cannot submit new translations to <a href="https://translate.wordpress.org/" target="_blank">translate.wordpress.org</a>. You can see the full discussion <a href="%3$s" target="_blank">here</a>.<br> If you believe this is a mistake, please request assistance in this <a href="%4$s" target="_blank">Slack channel</a> or submit an appeal at <a href="%5$s" target="_blank">Make WordPress.org</a>.', 'wporg-gp-block-translation-spammers');
+
 		return sprintf(
 			$message,
 			esc_url( $profile_url ),
@@ -150,41 +118,57 @@ class WPORG_GP_Block_Translation_Spammers {
     }
     
     /**
-     * Render the complete block page
-     *
-     * @param string $message The ban message to display.
-	 * 
-	 * @return void
+     * Display a message for banned users in the translation table.
+     * 
+     * @return void
      */
-    private function render_block_page( $message ) {
-        $title = esc_html__( 'Access Blocked', 'wporg-gp-block-translation-spammers' );
-        $site_name = get_bloginfo( 'name' );
-        $css_url = WPORG_GP_BLOCK_TRANSLATION_SPAMMERS_PLUGIN_URL . 'assets/css/style.css';
+    public function show_banned_message(): void {
+        if ( ! $this->is_target_domain() ) {
+            return;
+        }
         
-        ?>
-        <!DOCTYPE html>
-        <html <?php language_attributes(); ?>>
-        <head>
-            <meta charset="<?php bloginfo( 'charset' ); ?>">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <title><?php echo esc_html( $title ); ?> - <?php echo esc_html( $site_name ); ?></title>
-            <link rel="stylesheet" href="<?php echo esc_url( $css_url ); ?>" type="text/css" media="all">
-        </head>
-        <body>
-            <div class="container">
-                <h1><?php echo esc_html( $title ); ?></h1>
-                
-                <div class="message">
-                    <p><?php echo wp_kses( $message, array( 'a' => array( 'href' => true, 'title' => true, 'target' => true ), 'br' => array() ) ); ?></p>
-                </div>
-                
-                <div class="footer">
-                    <p><?php echo esc_html( $site_name ); ?></p>
-                </div>
-            </div>
-        </body>
-        </html>
-        <?php
+        if ( ! is_user_logged_in() ) {
+            return;
+        }
+        
+        $current_user = wp_get_current_user();
+        if ( ! $current_user || ! $current_user->exists() || ! $this->is_user_blocked( $current_user->user_login ) ) {
+            return;
+        }
+        
+        wp_enqueue_style(
+            'wporg-gp-block-translation-spammers',
+            WPORG_GP_BLOCK_TRANSLATION_SPAMMERS_PLUGIN_URL . 'assets/css/style.css',
+            array(),
+            filemtime( plugin_dir_path( __FILE__ ) . 'assets/css/style.css' )
+        );
+        
+        $message = $this->get_ban_message();
+
+		$content = '<div id="show_banned_message" class="show_banned_message">';
+        $content .= $message;
+        $content .= '</div>';
+
+        echo wp_kses(
+            $content,
+            array(
+                'div'  => array(
+                    'id'    => array(),
+                    'class' => array(),
+                    'style' => array(),
+                ),
+                'span' => array(
+                    'class' => array(),
+                    'style' => array(),
+                ),
+                'a'    => array(
+                    'href'   => array(),
+                    'target' => array(),
+                    'style'  => array(),
+                ),
+                'br'   => array(),
+            )
+        );
     }
 }
 
