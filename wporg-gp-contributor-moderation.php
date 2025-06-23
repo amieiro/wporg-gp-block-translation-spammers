@@ -160,7 +160,7 @@ class WPORG_GP_Contributor_Moderation {
 
 		$profile_url = sprintf( 'https://profiles.wordpress.org/%s/', rawurlencode( $username ) );
 		/* translators: 1: User profile URL, 2: Username, 3: Discussion URL, 4: Slack channel URL, 5: Make WordPress.org URL */
-		$message = __( 'Warning: You (<a href="%1$s" target="_blank">%2$s</a>) have submitted translations that <a href="%3$s" target="_blank">may not meet our quality standards</a>. You can continue to submit translations, but please review our <a href="%3$s" target="_blank">translation guidelines</a> carefully. If you keep submitting incorrect translations, you may be suspended from the system. You can see the full discussion <a href="%4$s" target="_blank">here</a>.<br> If you need assistance, please reach out in this <a href="%5$s" target="_blank">Slack channel</a> or at <a href="%6$s" target="_blank">Make WordPress.org</a>.', 'wporg-gp-contributor-moderation' );
+		$message = __( 'You (<a href="%1$s" target="_blank">%2$s</a>) have submitted translations that <a href="%3$s" target="_blank">may not meet our quality standards</a>. You can continue to submit translations, but please review our <a href="%3$s" target="_blank">translation guidelines</a> carefully. If you keep submitting incorrect translations, you may be suspended from the system. You can see the full discussion <a href="%4$s" target="_blank">here</a>.<br> If you need assistance, please reach out in this <a href="%5$s" target="_blank">Slack channel</a> or at <a href="%6$s" target="_blank">Make WordPress.org</a>.', 'wporg-gp-contributor-moderation' );
 
 		return sprintf(
 			$message,
