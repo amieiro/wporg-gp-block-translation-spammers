@@ -1,5 +1,10 @@
 # WordPress.org GP Contributor Moderation
 
+> [!WARNING]  
+> This repo is archived, as it has been [deployed to production](https://github.com/WordPress/wordpress.org/commit/ebe27184b2eea349166c3f7cef3af8dc1dad1afd).
+> 
+> You can find the updated code [here](https://github.com/WordPress/wordpress.org/tree/trunk/wordpress.org/public_html/wp-content/plugins/wporg-gp-contributor-moderation).
+
 This plugin warns or prevents certain users from submitting new individual and/or bulk translations to the [translation system](https://translate.wordpress.org/) because they repeatedly submitted incorrect translations.
 
 This is the message displayed to the warned user. The translation form is not blocked and the submit button is enabled.
